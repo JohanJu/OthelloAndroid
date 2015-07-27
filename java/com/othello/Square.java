@@ -51,7 +51,7 @@ public class Square {
 
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
-    float color[] = {0.0f, 0.5f, 0.0f, 1.0f};
+    float color[][] = {{0.0f, 0.0f, 0.0f, 1.0f},{0.0f, 0.5f, 0.0f, 1.0f},{1.0f, 1.0f, 1.0f, 1.0f}};
 
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
@@ -95,7 +95,7 @@ public class Square {
      * @param mvpMatrix - The Model View Project matrix in which to draw
      *                  this shape.
      */
-    public void draw(float[] mvpMatrix) {
+    public void draw(float[] mvpMatrix, int c) {
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
 
@@ -115,7 +115,7 @@ public class Square {
         mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 
         // Set color for drawing the triangle
-        GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+        GLES20.glUniform4fv(mColorHandle, 1, color[c+1], 0);
 
         // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");

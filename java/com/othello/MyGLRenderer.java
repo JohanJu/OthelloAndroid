@@ -27,33 +27,25 @@ import android.util.Log;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private Square mSquare;
-
-    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
+    private int[][] matb = new int[8][8];
 
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-        // Set the background frame color
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-        // initialize a triangle
         mSquare = new Square();
-//        wSquare = new WhiteSquare();
-        // initialize a square
-//        mSquare = new Square();
     }
 
-    public void putWhite(){
-        mSquare.draw(mMVPMatrix);
+    public void setM(int[][] matb) {
+        this.matb = matb;
+
     }
 
 
     public void onDrawFrame(GL10 unused) {
-        // Redraw background color
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-//        mTriangle.draw();
-        // Set the camera position (View matrix)
 
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         float step = -0.257f;
         float zero = 0.9f - step;
         Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
@@ -63,8 +55,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             for (int j = 0; j < 8; j++) {
                 Matrix.translateM(mViewMatrix, 0, step, 0, 0f);
                 Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
-                mSquare.draw(mMVPMatrix);
+                mSquare.draw(mMVPMatrix, matb[j][i]);
             }
             Matrix.translateM(mViewMatrix, 0, -8 * step, 0, 0f);
         }

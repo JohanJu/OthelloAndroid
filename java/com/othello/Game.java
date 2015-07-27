@@ -42,7 +42,10 @@ public class Game extends Fragment {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_UP:
                     Log.w("click", "x" + x + " y" + y);
-//                    mRenderer.putWhite();
+                    int[][] matb = new int[8][8];
+                    matb[x][y]=1;
+                    mRenderer.setM(matb);
+                    requestRender();
                     break;
             }
             return true;
