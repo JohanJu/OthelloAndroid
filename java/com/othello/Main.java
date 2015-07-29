@@ -96,7 +96,7 @@ public class Main extends Activity {
         }
     }
     public void start2(View view) {
-        
+
     }
 
 }
