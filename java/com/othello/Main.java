@@ -16,18 +16,15 @@
 package com.othello;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Point;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 
 public class Main extends Activity {
@@ -67,28 +64,39 @@ public class Main extends Activity {
         // this is a good place to re-allocate them.
 //        mGLView.onResume();
     }
-
+    GUI firstFragment;
     public void start(View view) {
 
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point p = new Point();
         display.getSize(p);
         int size = p.x;
-        Log.w("main", ""+size);
+        Log.w("main", "" + size);
 
         setContentView(R.layout.game);
         if (findViewById(R.id.fragc) != null) {
             Log.w("main", "fragc");
 
-           Game firstFragment = new Game();
+            firstFragment = new GUI();
 
             Bundle args = new Bundle();
             args.putInt("size", size);
             firstFragment.setArguments(args);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.fragc, firstFragment).commit();
+            //getFragmentManager().beginTransaction().add(R.id.fragc, firstFragment).commit();
+
+            FragmentManager FM = getFragmentManager();
+            FragmentTransaction transaction = FM.beginTransaction();
+            transaction.replace(R.id.fragc, firstFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            FM.executePendingTransactions();
+
+
 
         }
+    }
+    public void start2(View view) {
+        
     }
 
 }
