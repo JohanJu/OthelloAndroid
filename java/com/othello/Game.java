@@ -16,17 +16,30 @@ public class Game {
         matrix[4][5] = -1;
         matrix[5][4] = -1;
         matrix[5][5] = 1;
-        sendMatrix();
+        sendMatrix(null);
     }
 
-    private void sendMatrix() {
+    private void sendMatrix(int[][] help) {
         int[][] send = new int[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 send[i][j] = matrix[i + 1][j + 1];
             }
         }
-        mGLView.mRenderer.setM(send);
+        mGLView.mRenderer.setPiece(send);
+        if (help != null) {
+            int[][] senda = new int[8][8];
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (help[i + 1][j + 1] != 100) {
+                        senda[i][j] = -1;
+                    } else {
+                        senda[i][j] = 0;
+                    }
+                }
+            }
+            mGLView.mRenderer.setHelp(senda);
+        }
         mGLView.requestRender();
     }
 
@@ -104,9 +117,10 @@ public class Game {
 
             int x = 0, y = 0;
             if (player == 1 || !ai) {
+                sendMatrix(countMatrix);
                 while (!valid) {
 
-                    while(mGLView.b<0){
+                    while (mGLView.b < 0) {
 
                         try {
                             Thread.sleep(200);
@@ -140,7 +154,7 @@ public class Game {
             }
             valid = false;
 //            gui.paint(matrix, x, y);
-            sendMatrix();
+            sendMatrix(null);
 
             if (ai && player == -1) {
                 try {

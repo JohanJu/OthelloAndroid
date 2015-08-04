@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 2.0.
@@ -31,17 +32,17 @@ public class Square {
                     "  gl_FragColor = vColor;" +
                     "}";
 
-    private final FloatBuffer vertexBuffer;
-    private final ShortBuffer drawListBuffer;
-    private final int mProgram;
+    private  FloatBuffer vertexBuffer;
+    private  ShortBuffer drawListBuffer;
+    private  int mProgram;
     private int mPositionHandle;
     private int mColorHandle;
     private int mMVPMatrixHandle;
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
-    static final float size = 0.12f;
-    static float squareCoords[] = {
+    float size = 0.12f;
+    float squareCoords[] = {
             -size, size, 0.0f,   // top left
             -size, -size, 0.0f,   // bottom left
             size, -size, 0.0f,   // bottom right
@@ -56,7 +57,15 @@ public class Square {
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
+    public void logSize(){
+        Log.w("squareSize", ""+size+" "+squareCoords[0]);
+    }
+
     public Square() {
+
+    }
+    public void init(){
+        Log.w("Square", "con");
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 // (# of coordinate values * 4 bytes per float)
@@ -86,7 +95,7 @@ public class Square {
         mProgram = GLES20.glCreateProgram();             // create empty OpenGL Program
         GLES20.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
         GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(mProgram);                  // create OpenGL program executables
+        GLES20.glLinkProgram(mProgram);
     }
 
     /**

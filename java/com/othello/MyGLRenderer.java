@@ -26,25 +26,38 @@ import android.util.Log;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
-    private Square mSquare;
+    private Square mSquare, mDot;
+
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
     private int[][] matb = new int[8][8];
+    private int[][] mata = new int[8][8];
+    private boolean help = false;
 
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         mSquare = new Square();
+        mDot = new Dot();
+        mSquare.init();
+        mDot.init();
+        mSquare.logSize();
     }
 
-    public void setM(int[][] matb) {
+    public void setPiece(int[][] matb) {
         this.matb = matb;
+        help = false;
+    }
+    public void setHelp(int[][] mata) {
 
+        this.mata = mata;
+        help = true;
+        Log.w("setHelp",""+help);
     }
 
 
     public void onDrawFrame(GL10 unused) {
-
+        Log.w("onDrawFrame",""+help);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         float step = -0.257f;
         float zero = 0.9f - step;
@@ -56,10 +69,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 Matrix.translateM(mViewMatrix, 0, step, 0, 0f);
                 Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
                 mSquare.draw(mMVPMatrix, matb[j][i]);
+                if (help && mata[j][i] == -1 ){
+                    mDot.draw(mMVPMatrix, -1);
+                }
             }
             Matrix.translateM(mViewMatrix, 0, -8 * step, 0, 0f);
         }
-
     }
 
     public void onSurfaceChanged(GL10 unused, int width, int height) {
