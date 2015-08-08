@@ -1,16 +1,21 @@
 package com.othello;
 
-import android.util.Log;
 
 import java.util.ArrayList;
 
 public class Game {
     int[][] matrix = new int[10][10];
     int player;
+    boolean ai;
+    boolean help;
+    int level;
     MyGLSurfaceView mGLView;
 
-    public Game(MyGLSurfaceView mGLView) {
+    public Game(MyGLSurfaceView mGLView, int lvl, boolean pvp, boolean hint) {
         this.mGLView = mGLView;
+        level = (lvl + 1) * 2;
+        ai = !pvp;
+        help = hint;
         player = 1;
         matrix[4][4] = 1;
         matrix[4][5] = -1;
@@ -44,65 +49,46 @@ public class Game {
     }
 
     jjucbr2 jjucbr = new jjucbr2();
-    boolean ai = true;
-    boolean help = true;
-    int level = 3;
+
 
     public void start() {
-        if (ai) {
-//            level = gui.getLevel();
-            if (level > 10) {
-                level = 10;
-            }
-        } else {
-            level = 1;
-        }
 
 //        gui.updateLabel(player * -1);
+
         boolean finish = false;
         int noMove = 1;
         boolean valid = false;
         while (!finish) {
             int[][] countMatrix = new int[10][10];
-            if (help || ai) {
-                if (player == 1) {
-                    countMatrix = jjucbr.getAlphaBetaMatrix(matrix, player, 1);
-                } else {
-                    countMatrix = jjucbr.getAlphaBetaMatrix(matrix, player, level);
-                }
+            if (player == 1) {
+                countMatrix = jjucbr.getAlphaBetaMatrix(matrix, player, 1);
+            } else {
+                countMatrix = jjucbr.getAlphaBetaMatrix(matrix, player, level);
             }
 
             // change turn if cant move
             if (noMove == 0) {
                 noMove = 1;
             }
+            int count = 0;
             for (int i = 1; i < 9; i++) {
                 for (int j = 1; j < 9; j++) {
                     if (countMatrix[i][j] != 100) {
                         noMove = 0;
+                        if (matrix[i][j] == 1) {
+                            count++;
+                        } else if (matrix[i][j] == -1) {
+                            count--;
+                        }
                     }
                 }
             }
             if (noMove == 1) {
                 String[] pl = {"Black", "White"};
-//                gui.msg("Player " + pl[(player + 1) / 2] + " no moves");
-//                gui.updateLabel(player);
                 noMove = 2;
                 player = player * -1;
                 continue;
             } else if (noMove == 2) {
-                int count = 0;
-                for (int x = 0; x < 8; x++) {
-                    for (int y = 0; y < 8; y++) {
-
-                        if (matrix[x + 1][y + 1] == 1) {
-                            count++;
-                        } else if (matrix[x + 1][y + 1] == -1) {
-                            count--;
-                        }
-
-                    }
-                }
                 if (count == 0) {
 //                    gui.msg("Game over, draw");
                 } else if (count < 0) {
@@ -117,7 +103,9 @@ public class Game {
 
             int x = 0, y = 0;
             if (player == 1 || !ai) {
-                sendMatrix(countMatrix);
+                if (help) {
+                    sendMatrix(countMatrix);
+                }
                 while (!valid) {
 
                     while (mGLView.b < 0) {
@@ -345,4 +333,5 @@ public class Game {
 
         return valid;
     }
+
 }

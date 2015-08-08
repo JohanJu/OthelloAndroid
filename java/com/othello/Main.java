@@ -14,38 +14,43 @@
  * limitations under the License.
  */
 
-//test windows 10
 package com.othello;
 
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.RadioButton;
+import android.widget.Spinner;
+import android.widget.ToggleButton;
 
 
 public class Main extends Activity {
 
-
+    GUI firstFragment;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
 
-        // Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
-
-
-        // Create a GLSurfaceView instance and set it
-        // as the ContentView for this Activity
-//        mGLView = new MyGLSurfaceView(this);
-//        setContentView(mGLView);
+        Spinner spinner = (Spinner) findViewById(R.id.lvl);
+// Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter < CharSequence > adapter = ArrayAdapter.createFromResource(this,
+                R.array.lvl_array, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
     }
 
     @Override
@@ -66,26 +71,32 @@ public class Main extends Activity {
         // this is a good place to re-allocate them.
 //        mGLView.onResume();
     }
-    GUI firstFragment;
+
     public void start(View view) {
+        boolean pvp, help;
+        Spinner spinner = (Spinner) findViewById(R.id.lvl);
+        int lvl = spinner.getSelectedItemPosition();
+        RadioButton radio = (RadioButton) findViewById(R.id.pvp);
+        pvp = radio.isChecked();
+        ToggleButton toggle = (ToggleButton)findViewById(R.id.help);
+        help = toggle.isChecked();
 
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point p = new Point();
         display.getSize(p);
         int size = p.x;
-        Log.w("main", "" + size);
 
         setContentView(R.layout.game);
         if (findViewById(R.id.fragc) != null) {
-            Log.w("main", "fragc");
 
             firstFragment = new GUI();
 
             Bundle args = new Bundle();
             args.putInt("size", size);
+            args.putInt("lvl", lvl);
+            args.putBoolean("pvp", pvp);
+            args.putBoolean("help", help);
             firstFragment.setArguments(args);
-            //getFragmentManager().beginTransaction().add(R.id.fragc, firstFragment).commit();
-
             FragmentManager FM = getFragmentManager();
             FragmentTransaction transaction = FM.beginTransaction();
             transaction.replace(R.id.fragc, firstFragment);
@@ -93,11 +104,28 @@ public class Main extends Activity {
             transaction.commit();
             FM.executePendingTransactions();
 
-
-
         }
     }
-    public void start2(View view) {
+    @Override
+    public void onBackPressed() {
+        if (findViewById(R.id.fragc) == null) {
+            finish();
+        }else{
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("End game")
+                    .setMessage("Are you sure you want to end this game")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        }
 
     }
 
